@@ -1,0 +1,27 @@
+{
+    "schemaVersion": 1,
+    "id": "playercorpseblock",
+    "version": "${version}",
+    "name": "${mod_name}",
+    "description": "${description}",
+    "authors": [
+        "${mod_author}"
+    ],
+    "license": "${license}",
+    "icon": "playercorpseblock.png",
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "com.github.tacowasa059.playercorpseblock.PlayerCorpseBlockFabric"
+        ],
+        "client": [
+            "com.github.tacowasa059.playercorpseblock.PlayerCorpseBlockFabricClient"
+        ]
+    },
+    "depends": {
+        "fabricloader": ">=0.14",
+        "fabric-api": "*",
+        "minecraft": "${minecraft_version}",
+        "java": ">=17"
+    }
+}

@@ -1,0 +1,10 @@
+{
+    "variants": {
+        "corpses=1": {
+            "model": "playercorpseblock:block/player_corpse"
+        },
+        "corpses=2": {
+            "model": "playercorpseblock:block/player_corpse"
+        }
+    }
+}

@@ -1,0 +1,55 @@
+plugins {
+    id 'multiloader-loader'
+    id 'net.neoforged.moddev.legacyforge'
+}
+
+// This mod does not use mixins; everything it needs is available through loader events.
+legacyForge {
+    version = "${minecraft_version}-${forge_version}"
+
+    validateAccessTransformers = true
+
+    def at = project(':common').file('src/main/resources/META-INF/accesstransformer.cfg')
+    if (at.exists()) {
+        accessTransformers = ["src/main/resources/META-INF/accesstransformer.cfg"]
+    }
+    parchment {
+        minecraftVersion = parchment_minecraft
+        mappingsVersion = parchment_version
+    }
+    runs {
+        client {
+            client()
+        }
+        data {
+            data()
+            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+        }
+        server {
+            server()
+        }
+    }
+
+    mods {
+        "${mod_id}" {
+            sourceSet sourceSets.main
+        }
+    }
+}
+
+sourceSets.main.resources.srcDir 'src/generated/resources'
+
+dependencies {
+    compileOnly project(":common")
+
+    // Development only: gives the dev runs WorldEdit for building and testing piles of corpses.
+    // 'modRuntimeOnly' comes from the legacyforge plugin and maps the production jar back for dev.
+    // It does not pull transitive dependencies along, and the platform independent core has to stay off
+    // the boot module path or the mod cannot see it, hence 'additionalRuntimeClasspath'.
+    modRuntimeOnly "com.sk89q.worldedit:worldedit-forge-mc1.20:${worldedit_version}"
+    additionalRuntimeClasspath "com.sk89q.worldedit:worldedit-core:${worldedit_version}"
+}
+
+jar {
+    finalizedBy('reobfJar')
+}

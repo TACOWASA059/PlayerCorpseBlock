@@ -1,0 +1,55 @@
+name: Build
+
+on:
+  push:
+    branches: ["**"]
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
+  pull_request:
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: Build and test
+        run: |
+          chmod +x gradlew
+          ./gradlew build
+
+      - name: Upload mod jars
+        uses: actions/upload-artifact@v4
+        with:
+          name: playercorpseblock-jars
+          path: |
+            fabric/build/libs/*.jar
+            forge/build/libs/*.jar
+            !**/*-sources.jar
+            !**/*-javadoc.jar
+          if-no-files-found: error
+
+      - name: Upload test report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: common/build/reports/tests/test
+          if-no-files-found: ignore
